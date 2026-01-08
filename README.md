@@ -1,6 +1,4 @@
-Evo kompletnog, uređenog teksta za tvoj README.md. Sada sadrži tvoje ime i službeni email, što projektu daje puni legitimitet.
 
-Samo kopiraj sve ispod ove linije:
 
 AuraID: Digitalna Aura za hiper-lokalno povezivanje
 
