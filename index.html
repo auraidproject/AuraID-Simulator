@@ -1,120 +1,272 @@
+
 <!DOCTYPE html>
 <html lang="hr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraID Simulator</title>
+    <title>AuraID | Digitalna Aura</title>
     <style>
-        :root { --bg: #0f0f0f; --card: #1a1a1a; --primary: #007aff; --accent: #00ff88; --text: #ffffff; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
-        /* Mobile Wrapper */
-        .phone-container { width: 100%; max-width: 375px; height: 100%; max-height: 667px; background: var(--card); border-radius: 30px; position: relative; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid #333; }
-        
-        .header { padding: 40px 20px 20px; text-align: center; font-weight: bold; font-size: 1.2em; letter-spacing: 1px; color: var(--primary); }
-        .aura-circle { width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--primary); margin: 20px auto; display: flex; justify-content: center; align-items: center; position: relative; }
-        .aura-pulse { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px solid var(--primary); animation: pulse 2s infinite; opacity: 0; }
-        
-        @keyframes pulse { 0% { transform: scale(1); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
+        :root {
+            --bg: #0a0a0c;
+            --card-bg: #16161a;
+            --primary: #007aff;
+            --trebam: #ff3b30;
+            --nudim: #34c759;
+            --text: #ffffff;
+            --text-dim: #8e8e93;
+        }
 
-        .content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
-        label { font-size: 0.8em; color: #888; margin-bottom: -10px; }
-        input, select { background: #252525; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; font-size: 1em; }
-        
-        .btn-ping { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 1em; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        .btn-ping:active { transform: scale(0.95); opacity: 0.8; }
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); color: var(--text);
+            font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden;
+        }
 
-        #status-box { margin-top: 20px; padding: 15px; border-radius: 10px; background: #222; text-align: center; font-size: 0.9em; min-height: 40px; }
-        .match-active { background: var(--accent) !important; color: #000 !important; font-weight: bold; animation: flash 1s infinite; }
-        
-        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        /* --- SPLASH SCREEN --- */
+        #splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 1000;
+            transition: opacity 0.8s ease;
+        }
+        .logo-big {
+            font-size: 3em; font-weight: bold; color: var(--primary);
+            letter-spacing: 5px; text-shadow: 0 0 20px rgba(0,122,255,0.5);
+            animation: breathe 2s infinite ease-in-out;
+        }
+        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
 
-        .user-info { font-size: 0.7em; color: #555; text-align: center; margin-bottom: 10px; }
+        /* --- MAIN LAYOUT --- */
+        .app-container {
+            display: flex; flex-direction: column; height: 100vh;
+            max-width: 500px; margin: 0 auto; position: relative;
+        }
+
+        .header {
+            padding: 40px 20px 20px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header h1 { margin: 0; font-size: 1.5em; color: var(--primary); }
+        .user-id { font-size: 0.7em; color: var(--text-dim); }
+
+        /* --- RADAR / AURA AREA --- */
+        .radar-section {
+            height: 250px; display: flex; justify-content: center; align-items: center;
+            position: relative;
+        }
+        .aura-core {
+            width: 80px; height: 80px; background: var(--primary);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 30px rgba(0,122,255,0.6); z-index: 5;
+        }
+        .pulse-ring {
+            position: absolute; width: 80px; height: 80px;
+            border: 2px solid var(--primary); border-radius: 50%;
+            animation: ripple 3s infinite linear; opacity: 0;
+        }
+        .pulse-ring:nth-child(2) { animation-delay: 1s; }
+        .pulse-ring:nth-child(3) { animation-delay: 2s; }
+
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(3.5); opacity: 0; }
+        }
+
+        /* --- CARDS SECTION --- */
+        .cards-container {
+            flex: 1; padding: 0 20px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 12px;
+            padding-bottom: 100px;
+        }
+        .section-title { font-size: 0.8em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        .aura-card {
+            background: var(--card-bg); border-radius: 15px; padding: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 5px solid var(--primary);
+            animation: slideIn 0.3s ease-out;
+        }
+        .card-info { display: flex; flex-direction: column; }
+        .card-tag { font-size: 0.7em; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
+        .card-text { font-size: 1em; }
+        .btn-delete { background: none; border: none; color: #ff3b30; font-size: 1.2em; cursor: pointer; }
+
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- ADD BUTTON --- */
+        .fab {
+            position: absolute; bottom: 30px; right: 20px;
+            width: 60px; height: 60px; background: var(--primary);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            cursor: pointer; z-index: 10;
+        }
+
+        /* --- MODAL --- */
+        #modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: none;
+            justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--card-bg); width: 85%; max-width: 350px;
+            padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 15px;
+        }
+        select, input {
+            background: #252525; border: 1px solid #444; color: white;
+            padding: 12px; border-radius: 10px; font-size: 1em;
+        }
+        .btn-group { display: flex; gap: 10px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-cancel { background: #333; color: white; }
     </style>
 </head>
 <body>
 
-<div class="phone-container">
-    <div class="header">AuraID</div>
-    
-    <div class="aura-circle">
-        <div class="aura-pulse" id="pulse"></div>
-        <span id="id-display">ID...</span>
+    <!-- SPLASH SCREEN -->
+    <div id="splash">
+        <div class="logo-big">AuraID</div>
+        <div style="margin-top: 20px; color: var(--text-dim);">Inicijalizacija osjetila...</div>
     </div>
 
-    <div class="content">
-        <label>MOJA AKTIVNOST</label>
-        <select id="hexPrefix">
-            <option value="01">Nudim (01)</option>
-            <option value="02">Tražim (02)</option>
-        </select>
-        
-        <label>KATEGORIJA</label>
-        <input type="text" id="hexCat" value="A1" maxlength="2">
-        
-        <label>LOKACIJA</label>
-        <input type="text" id="lokacija" value="Menza_Sava">
-        
-        <button class="btn-ping" onclick="startAura()">AKTIVIRAJ AURU</button>
-        
-        <div id="status-box">Sustav spreman...</div>
-        <div class="user-info" id="user-details"></div>
+    <div class="app-container">
+        <div class="header">
+            <h1>AuraID</h1>
+            <div class="user-id" id="display-id">ID: ...</div>
+        </div>
+
+        <div class="radar-section">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="aura-core">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z"/></svg>
+            </div>
+        </div>
+
+        <div class="cards-container">
+            <div class="section-title">Moja Aktivna Aura</div>
+            <div id="aura-list">
+                <!-- Kartice idu ovdje -->
+            </div>
+        </div>
+
+        <div class="fab" onclick="toggleModal(true)">+</div>
     </div>
-</div>
 
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec"; // <--- OVDJE STAVI SVOJ URL
+    <!-- MODAL ZA DODAVANJE -->
+    <div id="modal">
+        <div class="modal-content">
+            <h2 style="margin:0">Nova Objava</h2>
+            <select id="type">
+                <option value="02">TREBAM (Potražnja)</option>
+                <option value="01">NUDIM (Ponuda)</option>
+            </select>
+            <select id="category">
+                <option value="S">Usluge</option>
+                <option value="B">Kupovina/Prodaja</option>
+                <option value="P">Osobu/Dating</option>
+                <option value="R">Najam</option>
+                <option value="G">Poklon</option>
+                <option value="C">Društvo</option>
+                <option value="H">Pomoć</option>
+            </select>
+            <input type="text" id="desc" placeholder="Što točno? (npr. Soboslikar)">
+            <div class="btn-group">
+                <button class="btn-modal btn-cancel" onclick="toggleModal(false)">Odustani</button>
+                <button class="btn-modal btn-save" onclick="saveAura()">Dodaj u Auru</button>
+            </div>
+        </div>
+    </div>
 
-    // 1. GENERIRANJE ILI PREUZIMANJE UNIKATNOG ID-A
-    let userId = localStorage.getItem('aura_id');
-    if (!userId) {
-        userId = 'Aura-' + Math.floor(1000 + Math.random() * 9000);
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec"; // <--- ZALIJEPI SVOJ URL
+
+        // --- USER ID & STORAGE ---
+        let userId = localStorage.getItem('aura_id') || 'Aura-' + Math.floor(1000 + Math.random() * 9000);
         localStorage.setItem('aura_id', userId);
-    }
-    document.getElementById('id-display').innerText = userId;
-    document.getElementById('user-details').innerText = "Vaš stalni ID: " + userId;
+        document.getElementById('display-id').innerText = 'ID: ' + userId;
 
-    let isScanning = false;
+        let myAuras = JSON.parse(localStorage.getItem('my_auras')) || [];
 
-    async function startAura() {
-        isScanning = true;
-        document.getElementById('pulse').style.display = 'block';
-        document.getElementById('status-box').innerText = "Aura je aktivna. Osluškujem...";
-        
-        // Prvi ping
-        sendPing();
-        
-        // Ponavljaj ping svakih 7 sekundi (da ne zagušimo tablicu)
-        setInterval(() => {
-            if(isScanning) sendPing();
-        }, 7000);
-    }
+        // --- SPLASH HIDE ---
+        setTimeout(() => {
+            document.getElementById('splash').style.opacity = '0';
+            setTimeout(() => document.getElementById('splash').style.display = 'none', 800);
+        }, 2500);
 
-    async function sendPing() {
-        const payload = {
-            id: userId,
-            hex: document.getElementById('hexPrefix').value + document.getElementById('hexCat').value,
-            hash: Math.floor(Math.random() * 9000) + 1000,
-            lokacija: document.getElementById('lokacija').value
-        };
-
-        try {
-            const response = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(payload)
-            });
-            
-            // Budući da je no-cors, ne možemo čitati odgovor direktno,
-            // ali možemo dodati vizualni signal da je ping poslan
-            console.log("Ping poslan...");
-        } catch (e) {
-            console.error("Greška:", e);
+        // --- UI FUNCTIONS ---
+        function toggleModal(show) {
+            document.getElementById('modal').style.display = show ? 'flex' : 'none';
         }
-    }
 
-    // Ovdje ćemo u idućem koraku dodati funkciju za provjeru MATCH-a iz tablice
-</script>
+        function renderAuras() {
+            const list = document.getElementById('aura-list');
+            list.innerHTML = '';
+            myAuras.forEach((aura, index) => {
+                const color = aura.type === '01' ? 'var(--nudim)' : 'var(--trebam)';
+                const typeText = aura.type === '01' ? 'Nudim' : 'Trebam';
+                list.innerHTML += `
+                    <div class="aura-card" style="border-left-color: ${color}">
+                        <div class="card-info">
+                            <span class="card-tag" style="color: ${color}">${typeText} | ${aura.catName}</span>
+                            <span class="card-text">${aura.text}</span>
+                        </div>
+                        <button class="btn-delete" onclick="deleteAura(${index})">✕</button>
+                    </div>
+                `;
+            });
+            localStorage.setItem('my_auras', JSON.stringify(myAuras));
+            sendMasterPing();
+        }
 
+        function saveAura() {
+            const type = document.getElementById('type').value;
+            const cat = document.getElementById('category').value;
+            const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+            const text = document.getElementById('desc').value;
+
+            if(!text) return alert("Upišite opis!");
+
+            myAuras.push({ type, cat, catName, text, timestamp: Date.now() });
+            renderAuras();
+            toggleModal(false);
+            document.getElementById('desc').value = '';
+        }
+
+        function deleteAura(index) {
+            myAuras.splice(index, 1);
+            renderAuras();
+        }
+
+        // --- MASTER PING LOGIC ---
+        async function sendMasterPing() {
+            if (myAuras.length === 0) return;
+
+            // Generiraj Master Hex Kod (npr. 01S,02C)
+            const masterHex = myAuras.map(a => a.type + a.cat).join(',');
+            
+            const payload = {
+                id: userId,
+                hex: masterHex,
+                hash: Math.floor(Math.random() * 9000) + 1000,
+                lokacija: "Menza_Sava" // Privremeno fiksno
+            };
+
+            try {
+                await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                console.log("Master Ping poslan: " + masterHex);
+            } catch (e) { console.error(e); }
+        }
+
+        // Inicijalno renderiranje
+        renderAuras();
+
+        // Auto-ping svakih 10 sekundi ako ima aktivnih aura
+        setInterval(sendMasterPing, 10000);
+
+    </script>
 </body>
 </html>
+aj vizualni smjer? Ako si zadovoljan, idući put možemo srediti tajmer za svaku karticu!
