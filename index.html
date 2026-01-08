@@ -9,7 +9,7 @@
         :root {
             --bg: #0a0a0c;
             --card-bg: #16161a;
-            --primary: #007aff;
+            --primary: #007aff; /* Default plava */
             --trebam: #ff3b30;
             --nudim: #34c759;
             --text: #ffffff;
@@ -27,7 +27,7 @@
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 1000;
+            justify-content: center; align-items: center; z-index: 2000;
             transition: opacity 0.8s ease;
         }
         .logo-big {
@@ -39,30 +39,32 @@
 
         /* --- MAIN LAYOUT --- */
         .app-container {
-            display: flex; flex-direction: column; height: 100vh;
+            display: flex; flex-direction: column; 
+            height: 100dvh; /* Dynamic viewport height za tablete */
             max-width: 500px; margin: 0 auto; position: relative;
+            background: var(--bg);
         }
 
         .header {
-            padding: 40px 20px 20px; display: flex; justify-content: space-between; align-items: center;
+            padding: 40px 20px 10px; display: flex; justify-content: space-between; align-items: center;
         }
-        .header h1 { margin: 0; font-size: 1.5em; color: var(--primary); }
-        .user-id { font-size: 0.7em; color: var(--text-dim); }
+        .header h1 { margin: 0; font-size: 1.5em; color: var(--primary); transition: color 0.5s; }
+        .user-id { font-size: 0.7em; color: var(--text-dim); background: #222; padding: 4px 8px; border-radius: 5px; }
 
         /* --- RADAR / AURA AREA --- */
         .radar-section {
-            height: 250px; display: flex; justify-content: center; align-items: center;
+            height: 220px; display: flex; justify-content: center; align-items: center;
             position: relative;
         }
         .aura-core {
             width: 80px; height: 80px; background: var(--primary);
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 30px rgba(0,122,255,0.6); z-index: 5;
+            box-shadow: 0 0 40px var(--primary); z-index: 5; transition: all 0.5s;
         }
         .pulse-ring {
             position: absolute; width: 80px; height: 80px;
             border: 2px solid var(--primary); border-radius: 50%;
-            animation: ripple 3s infinite linear; opacity: 0;
+            animation: ripple 3s infinite linear; opacity: 0; transition: border-color 0.5s;
         }
         .pulse-ring:nth-child(2) { animation-delay: 1s; }
         .pulse-ring:nth-child(3) { animation-delay: 2s; }
@@ -78,46 +80,50 @@
             display: flex; flex-direction: column; gap: 12px;
             padding-bottom: 100px;
         }
-        .section-title { font-size: 0.8em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .section-title { font-size: 0.8em; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
 
         .aura-card {
             background: var(--card-bg); border-radius: 15px; padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
             border-left: 5px solid var(--primary);
             animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .card-info { display: flex; flex-direction: column; }
-        .card-tag { font-size: 0.7em; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; }
-        .card-text { font-size: 1em; }
-        .btn-delete { background: none; border: none; color: #ff3b30; font-size: 1.2em; cursor: pointer; }
+        .card-tag { font-size: 0.7em; font-weight: bold; margin-bottom: 4px; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        .card-text { font-size: 1.1em; font-weight: 500; }
+        .btn-delete { background: none; border: none; color: #555; font-size: 1.2em; cursor: pointer; padding: 10px; }
 
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* --- ADD BUTTON --- */
+        /* --- FAB (Floating Action Button) --- */
         .fab {
-            position: absolute; bottom: 30px; right: 20px;
-            width: 60px; height: 60px; background: var(--primary);
+            position: absolute; bottom: 30px; right: 25px;
+            width: 70px; height: 70px; background: var(--primary);
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            cursor: pointer; z-index: 10;
+            font-size: 2.5em; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            cursor: pointer; z-index: 100; transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
+        .fab:active { transform: scale(0.9); }
 
         /* --- MODAL --- */
         #modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
-            justify-content: center; align-items: center; z-index: 2000;
+            justify-content: center; align-items: center; z-index: 3000;
         }
         .modal-content {
             background: var(--card-bg); width: 85%; max-width: 350px;
-            padding: 25px; border-radius: 20px; display: flex; flex-direction: column; gap: 15px;
+            padding: 25px; border-radius: 25px; display: flex; flex-direction: column; gap: 15px;
+            border: 1px solid #333;
         }
         select, input {
             background: #252525; border: 1px solid #444; color: white;
-            padding: 12px; border-radius: 10px; font-size: 1em;
+            padding: 14px; border-radius: 12px; font-size: 1em; outline: none;
         }
-        .btn-group { display: flex; gap: 10px; }
-        .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-modal { flex: 1; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; font-size: 1em; }
         .btn-save { background: var(--primary); color: white; }
         .btn-cancel { background: #333; color: white; }
     </style>
@@ -127,61 +133,65 @@
     <!-- SPLASH SCREEN -->
     <div id="splash">
         <div class="logo-big">AuraID</div>
-        <div style="margin-top: 20px; color: var(--text-dim);">Inicijalizacija osjetila...</div>
+        <div style="margin-top: 20px; color: var(--text-dim); letter-spacing: 2px; font-size: 0.8em;">POVEZIVANJE OSJETILA...</div>
     </div>
 
     <div class="app-container">
         <div class="header">
-            <h1>AuraID</h1>
+            <h1 id="main-title">AuraID</h1>
             <div class="user-id" id="display-id">ID: ...</div>
         </div>
 
         <div class="radar-section">
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring"></div>
-            <div class="pulse-ring"></div>
-            <div class="aura-core">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z"/></svg>
+            <div class="pulse-ring" id="ring1"></div>
+            <div class="pulse-ring" id="ring2"></div>
+            <div class="pulse-ring" id="ring3"></div>
+            <div class="aura-core" id="core">
+                <svg width="35" height="35" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z"/></svg>
             </div>
         </div>
 
         <div class="cards-container">
             <div class="section-title">Moja Aktivna Aura</div>
             <div id="aura-list">
-                <!-- Kartice idu ovdje -->
+                <!-- Kartice se generiraju ovdje -->
             </div>
         </div>
 
-        <div class="fab" onclick="toggleModal(true)">+</div>
+        <div class="fab" id="fab-btn" onclick="toggleModal(true)">+</div>
     </div>
 
     <!-- MODAL ZA DODAVANJE -->
     <div id="modal">
         <div class="modal-content">
-            <h2 style="margin:0">Nova Objava</h2>
+            <h2 style="margin:0; text-align: center;">Nova Objava</h2>
+            <label style="font-size: 0.8em; color: var(--text-dim);">VRSTA</label>
             <select id="type">
                 <option value="02">TREBAM (Potražnja)</option>
                 <option value="01">NUDIM (Ponuda)</option>
             </select>
+            <label style="font-size: 0.8em; color: var(--text-dim);">KATEGORIJA</label>
             <select id="category">
-                <option value="S">Usluge</option>
-                <option value="B">Kupovina/Prodaja</option>
-                <option value="P">Osobu/Dating</option>
-                <option value="R">Najam</option>
-                <option value="G">Poklon</option>
-                <option value="C">Društvo</option>
-                <option value="H">Pomoć</option>
+                <option value="S">🛠️ Usluge</option>
+                <option value="B">🛒 Kupovina/Prodaja</option>
+                <option value="P">👤 Osobu/Dating</option>
+                <option value="R">🏠 Najam</option>
+                <option value="G">🎁 Poklon</option>
+                <option value="C">☕ Društvo</option>
+                <option value="H">🆘 Pomoć</option>
             </select>
-            <input type="text" id="desc" placeholder="Što točno? (npr. Soboslikar)">
+            <label style="font-size: 0.8em; color: var(--text-dim);">DETALJI</label>
+            <input type="text" id="desc" placeholder="npr. Soboslikar, Tenis..." maxlength="30">
             <div class="btn-group">
                 <button class="btn-modal btn-cancel" onclick="toggleModal(false)">Odustani</button>
-                <button class="btn-modal btn-save" onclick="saveAura()">Dodaj u Auru</button>
+                <button class="btn-modal btn-save" onclick="saveAura()">Aktiviraj</button>
             </div>
         </div>
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec"; // <--- ZALIJEPI SVOJ URL
+        // --- KONFIGURACIJA ---
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec";
 
         // --- USER ID & STORAGE ---
         let userId = localStorage.getItem('aura_id') || 'Aura-' + Math.floor(1000 + Math.random() * 9000);
@@ -192,42 +202,69 @@
 
         // --- SPLASH HIDE ---
         setTimeout(() => {
-            document.getElementById('splash').style.opacity = '0';
-            setTimeout(() => document.getElementById('splash').style.display = 'none', 800);
-        }, 2500);
+            const splash = document.getElementById('splash');
+            splash.style.opacity = '0';
+            setTimeout(() => splash.style.display = 'none', 800);
+        }, 2200);
 
-        // --- UI FUNCTIONS ---
+        // --- UI FUNKCIJE ---
         function toggleModal(show) {
             document.getElementById('modal').style.display = show ? 'flex' : 'none';
+        }
+
+        function updateAuraVisuals() {
+            const root = document.querySelector(':root');
+            const core = document.getElementById('core');
+            const title = document.getElementById('main-title');
+            const fab = document.getElementById('fab-btn');
+            
+            const hasTrebam = myAuras.some(a => a.type === '02');
+            const hasNudim = myAuras.some(a => a.type === '01');
+
+            let newColor = '#007aff'; // Default plava
+            if (hasTrebam && !hasNudim) newColor = '#ff3b30'; // Crvena
+            if (hasNudim && !hasTrebam) newColor = '#34c759'; // Zelena
+            if (hasTrebam && hasNudim) newColor = '#ffcc00';  // Žuta (mješovito)
+
+            root.style.setProperty('--primary', newColor);
+            core.style.backgroundColor = newColor;
+            core.style.boxShadow = `0 0 40px ${newColor}`;
+            title.style.color = newColor;
+            fab.style.backgroundColor = newColor;
         }
 
         function renderAuras() {
             const list = document.getElementById('aura-list');
             list.innerHTML = '';
+            
             myAuras.forEach((aura, index) => {
                 const color = aura.type === '01' ? 'var(--nudim)' : 'var(--trebam)';
                 const typeText = aura.type === '01' ? 'Nudim' : 'Trebam';
+                const catIcon = document.querySelector(`#category option[value="${aura.cat}"]`).text.split(' ')[0];
+                
                 list.innerHTML += `
                     <div class="aura-card" style="border-left-color: ${color}">
                         <div class="card-info">
-                            <span class="card-tag" style="color: ${color}">${typeText} | ${aura.catName}</span>
+                            <span class="card-tag" style="color: ${color}">${catIcon} ${typeText} | ${aura.catName}</span>
                             <span class="card-text">${aura.text}</span>
                         </div>
                         <button class="btn-delete" onclick="deleteAura(${index})">✕</button>
                     </div>
                 `;
             });
+            
             localStorage.setItem('my_auras', JSON.stringify(myAuras));
+            updateAuraVisuals();
             sendMasterPing();
         }
 
         function saveAura() {
             const type = document.getElementById('type').value;
             const cat = document.getElementById('category').value;
-            const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+            const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text.split(' ')[1];
             const text = document.getElementById('desc').value;
 
-            if(!text) return alert("Upišite opis!");
+            if(!text) return;
 
             myAuras.push({ type, cat, catName, text, timestamp: Date.now() });
             renderAuras();
@@ -240,33 +277,39 @@
             renderAuras();
         }
 
-        // --- MASTER PING LOGIC ---
+        // --- MASTER PING (Slanje u Google Sheets) ---
         async function sendMasterPing() {
-            if (myAuras.length === 0) return;
+            if (myAuras.length === 0) {
+                // Opcionalno: pošalji "Empty" status u tablicu
+                return;
+            }
 
-            // Generiraj Master Hex Kod (npr. 01S,02C)
             const masterHex = myAuras.map(a => a.type + a.cat).join(',');
             
             const payload = {
                 id: userId,
                 hex: masterHex,
                 hash: Math.floor(Math.random() * 9000) + 1000,
-                lokacija: "Menza_Sava" // Privremeno fiksno
+                lokacija: "Menza_Sava" 
             };
 
             try {
-                await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                console.log("Master Ping poslan: " + masterHex);
-            } catch (e) { console.error(e); }
+                await fetch(WEB_APP_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(payload) 
+                });
+                console.log("Aura poslana: " + masterHex);
+            } catch (e) { 
+                console.error("Greška u slanju:", e); 
+            }
         }
 
-        // Inicijalno renderiranje
+        // Inicijalizacija
         renderAuras();
 
-        // Auto-ping svakih 10 sekundi ako ima aktivnih aura
-        setInterval(sendMasterPing, 10000);
+        // Automatsko slanje svakih 15 sekundi radi simulacije "prisutnosti"
+        setInterval(sendMasterPing, 15000);
 
     </script>
 </body>
-</html>
-aj vizualni smjer? Ako si zadovoljan, idući put možemo srediti tajmer za svaku karticu!
