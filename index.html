@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AuraID Simulator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .card { background: #1e1e1e; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); max-width: 400px; margin: auto; border: 1px solid #333; }
+        input, select { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #444; background: #252525; color: white; }
+        button { background: #007bff; color: white; border: none; padding: 15px 30px; border-radius: 30px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px; }
+        button:active { background: #0056b3; }
+        #status { margin-top: 20px; font-weight: bold; font-size: 1.2em; }
+        .match { color: #00ff00; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <h1>AuraID Simulator</h1>
+    
+    <div class="card">
+        <label>Moj ID (npr. 101):</label>
+        <input type="number" id="userId" value="101">
+        
+        <label>Što radim:</label>
+        <select id="hexPrefix">
+            <option value="01">Nudim (01)</option>
+            <option value="02">Tražim (02)</option>
+        </select>
+        
+        <label>Kategorija (npr. A1):</label>
+        <input type="text" id="hexCat" value="A1" maxlength="2">
+        
+        <label>Lokacija (Simulacija):</label>
+        <input type="text" id="lokacija" value="Menza_Sava">
+        
+        <button onclick="posaljiAuru()">POŠALJI PING (Aura)</button>
+        
+        <div id="status">Sustav spreman...</div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec"; // <--- OVDJE STAVI SVOJ URL
+
+        async function posaljiAuru() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerText = "Šaljem ping...";
+            statusDiv.className = "";
+
+            const payload = {
+                id: document.getElementById('userId').value,
+                hex: document.getElementById('hexPrefix').value + document.getElementById('hexCat').value,
+                hash: Math.floor(Math.random() * 9000) + 1000, // Simulacija hasha
+                lokacija: document.getElementById('lokacija').value
+            };
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Zbog Google sigurnosti
+                    body: JSON.stringify(payload)
+                });
+
+                statusDiv.innerText = "Ping poslan! Provjeri tablicu...";
+                
+                // Budući da koristimo no-cors, ne možemo pročitati odgovor direktno 
+                // u ovom testu, ali ćemo vidjeti promjenu u tablici!
+                
+            } catch (error) {
+                statusDiv.innerText = "Greška u slanju.";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
