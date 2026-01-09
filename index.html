@@ -196,6 +196,13 @@
         }
 
         function renderAuras() {
+             myAuras.forEach(aura => {
+        if (aura.hash === undefined) {
+            aura.hash = generateHash(aura.text);
+        }
+    });
+    
+    const list = document.getElementById('aura-list');
             const list = document.getElementById('aura-list');
             list.innerHTML = '';
             myAuras.forEach((aura, index) => {
