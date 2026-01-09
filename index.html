@@ -156,105 +156,97 @@
         </div>
     </div>
 
-    <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec";
 
-        let userId = localStorage.getItem('aura_id') || 'Aura-' + Math.floor(1000 + Math.random() * 9000);
-        localStorage.setItem('aura_id', userId);
-        document.getElementById('display-id').innerText = 'ID: ' + userId;
+    
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyBEZFrM-oBmhVWQEUNWob0APuURFP-f4jYeAUgkcdOJm8ucGT1-8_VFpnVlXqZr5madQ/exec";
 
-        let myAuras = JSON.parse(localStorage.getItem('my_auras')) || [];
-        let isMatchActive = false;
+    // --- AUDIO SUSTAV (Tvoj MP3) ---
+    const auraAudio = new Audio('https://raw.githubusercontent.com/auraidproject/AuraID-Simulator/main/beep-329314.mp3');
 
-        setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
+    let userId = localStorage.getItem('aura_id') || 'Aura-' + Math.floor(1000 + Math.random() * 9000);
+    localStorage.setItem('aura_id', userId);
+    document.getElementById('display-id').innerText = 'ID: ' + userId;
 
-        function toggleModal(show) { document.getElementById('modal').style.display = show ? 'flex' : 'none'; }
+    let myAuras = JSON.parse(localStorage.getItem('my_auras')) || [];
+    let isMatchActive = false;
 
-        function renderAuras() {
-            const list = document.getElementById('aura-list');
-            list.innerHTML = '';
-            myAuras.forEach((aura, index) => {
-                const color = aura.type === '01' ? 'var(--nudim)' : 'var(--trebam)';
-                list.innerHTML += `
-                    <div class="aura-card" style="border-left-color: ${color}">
-                        <div style="display:flex; flex-direction:column">
-                            <span style="font-size:0.7em; color:${color}">${aura.catName}</span>
-                            <span class="card-text">${aura.text}</span>
-                        </div>
-                        <button class="btn-delete" onclick="deleteAura(${index})">✕</button>
-                    </div>`;
-            });
-            localStorage.setItem('my_auras', JSON.stringify(myAuras));
-            sendMasterPing();
-        }
+    // Splash screen
+    setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 2000);
 
-        function saveAura() {
-            const type = document.getElementById('type').value;
-            const cat = document.getElementById('category').value;
-            const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
-            const text = document.getElementById('desc').value;
-            if(!text) return;
-            myAuras.push({ type, cat, catName, text });
-            renderAuras();
-            toggleModal(false);
-            document.getElementById('desc').value = '';
-        }
+    function toggleModal(show) { document.getElementById('modal').style.display = show ? 'flex' : 'none'; }
 
-        function deleteAura(index) { myAuras.splice(index, 1); renderAuras(); }
+    function renderAuras() {
+        const list = document.getElementById('aura-list');
+        list.innerHTML = '';
+        myAuras.forEach((aura, index) => {
+            const color = aura.type === '01' ? 'var(--nudim)' : 'var(--trebam)';
+            list.innerHTML += `
+                <div class="aura-card" style="border-left-color: ${color}">
+                    <div style="display:flex; flex-direction:column">
+                        <span style="font-size:0.7em; color:${color}">${aura.catName}</span>
+                        <span class="card-text">${aura.text}</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteAura(${index})">✕</button>
+                </div>`;
+        });
+        localStorage.setItem('my_auras', JSON.stringify(myAuras));
+        sendMasterPing();
+    }
 
-        // --- KOMUNIKACIJA ---
-        async function sendMasterPing() {
-            if (myAuras.length === 0) return;
-            const masterHex = myAuras.map(a => a.type + a.cat).join(',');
-            try {
-                await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({id: userId, hex: masterHex, lokacija: "Menza_Sava", hash: 123}) });
-            } catch (e) { console.log("Ping error"); }
-        }
-
-        async function checkStatus() {
-            try {
-                const response = await fetch(`${WEB_APP_URL}?id=${userId}`);
-                const status = await response.text();
-                if (status === "MATCH!" && !isMatchActive) {
-                    triggerMatch();
-                } else if (status === "NoMatch") {
-                    resetMatch();
-                }
-            } catch (e) { console.log("Check error"); }
-        }
-
-        function triggerMatch() {
-            isMatchActive = true;
-            document.getElementById('status-display').innerText = "PRILIKA U BLIZINI!";
-            document.getElementById('status-display').classList.add('status-match');
-            playPingSound();
-            if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-        }
-
-        function resetMatch() {
-            isMatchActive = false;
-            document.getElementById('status-display').innerText = "Aura je aktivna...";
-            document.getElementById('status-display').classList.remove('status-match');
-        }
-
-        function playPingSound() {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            gain.gain.setValueAtTime(0, ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.1);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.8);
-        }
-
+    function saveAura() {
+        const type = document.getElementById('type').value;
+        const cat = document.getElementById('category').value;
+        const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+        const text = document.getElementById('desc').value;
+        if(!text) return;
+        myAuras.push({ type, cat, catName, text });
         renderAuras();
-        setInterval(sendMasterPing, 10000);
-        setInterval(checkStatus, 5000);
-    </script>
-</body>
+        toggleModal(false);
+        document.getElementById('desc').value = '';
+    }
+
+    function deleteAura(index) { myAuras.splice(index, 1); renderAuras(); }
+
+    async function sendMasterPing() {
+        const masterHex = myAuras.length > 0 ? myAuras.map(a => a.type + a.cat).join(',') : "";
+        try {
+            await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({id: userId, hex: masterHex, lokacija: "Menza_Sava", hash: 123}) });
+        } catch (e) { console.log("Ping error"); }
+    }
+
+    async function checkStatus() {
+        try {
+            const response = await fetch(`${WEB_APP_URL}?id=${userId}`);
+            const status = await response.text();
+            
+            if (status === "MATCH!" && !isMatchActive) {
+                triggerMatch();
+            } else if (status === "NoMatch" && isMatchActive) {
+                resetMatch();
+            }
+        } catch (e) { console.log("Check error"); }
+    }
+
+    function triggerMatch() {
+        isMatchActive = true;
+        document.getElementById('status-display').innerText = "PRILIKA U BLIZINI!";
+        document.getElementById('status-display').classList.add('status-match');
+        
+        // Reprodukcija tvog MP3-a
+        auraAudio.play().catch(e => console.log("Audio play blocked. Click anywhere first."));
+        
+        if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+    }
+
+    function resetMatch() {
+        isMatchActive = false;
+        document.getElementById('status-display').innerText = "Aura je aktivna...";
+        document.getElementById('status-display').classList.remove('status-match');
+    }
+
+    renderAuras();
+    setInterval(sendMasterPing, 10000);
+    setInterval(checkStatus, 4000); // Provjera svake 4 sekunde
+</script>
 </html>
