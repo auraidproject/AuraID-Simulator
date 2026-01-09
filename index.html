@@ -23,6 +23,7 @@
             overflow: hidden;
         }
 
+        /* --- SPLASH SCREEN --- */
         #splash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column;
@@ -31,20 +32,22 @@
         }
         .logo-big {
             font-size: 3em; font-weight: bold; color: var(--primary);
-            letter-spacing: 5px; text-shadow: 0 0 20px rgba(0,122,255,0.5);
-            animation: breathe 2s infinite ease-in-out;
+            letter-spacing: 5px; animation: breathe 2s infinite ease-in-out;
         }
         @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
 
+        /* --- MAIN LAYOUT --- */
         .app-container {
-            display: flex; flex-direction: column; height: 100dvh;
-            max-width: 500px; margin: 0 auto; position: relative;
+            display: flex; flex-direction: column; 
+            height: 100dvh; max-width: 500px; margin: 0 auto; position: relative;
+            background: var(--bg);
         }
 
         .header { padding: 40px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { margin: 0; font-size: 1.5em; color: var(--primary); transition: all 0.5s; }
+        .header h1 { margin: 0; font-size: 1.5em; color: var(--primary); transition: color 0.5s; }
         .user-id { font-size: 0.7em; color: var(--text-dim); background: #222; padding: 4px 8px; border-radius: 5px; }
 
+        /* --- RADAR AREA --- */
         .radar-section { height: 200px; display: flex; justify-content: center; align-items: center; position: relative; }
         .aura-core {
             width: 80px; height: 80px; background: var(--primary);
@@ -57,7 +60,6 @@
             animation: ripple 3s infinite linear; opacity: 0;
         }
         .pulse-ring:nth-child(2) { animation-delay: 1s; }
-        .pulse-ring:nth-child(3) { animation-delay: 2s; }
 
         @keyframes ripple {
             0% { transform: scale(1); opacity: 0.5; }
@@ -67,35 +69,35 @@
         .status-bar {
             margin: 0 20px 15px; padding: 12px; border-radius: 12px;
             background: #1a1a1a; text-align: center; font-size: 0.9em;
-            color: var(--text-dim); border: 1px solid #333;
-            transition: all 0.5s;
+            color: var(--text-dim); border: 1px solid #333; transition: all 0.5s;
         }
         .status-match {
             background: var(--match) !important; color: #000 !important;
             font-weight: bold; box-shadow: 0 0 20px var(--match);
         }
 
-        .cards-container {
-            flex: 1; padding: 0 20px; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 12px;
-            padding-bottom: 100px;
-        }
+        /* --- CARDS --- */
+        .cards-container { flex: 1; padding: 0 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 100px; }
         .aura-card {
             background: var(--card-bg); border-radius: 15px; padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
-            border-left: 5px solid var(--primary);
+            border-left: 5px solid var(--primary); animation: slideIn 0.3s ease-out;
         }
         .card-text { font-size: 1.1em; font-weight: 500; }
         .btn-delete { background: none; border: none; color: #555; font-size: 1.2em; cursor: pointer; padding: 10px; }
 
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- FAB --- */
         .fab {
             position: absolute; bottom: 30px; right: 25px;
             width: 70px; height: 70px; background: var(--primary);
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
             font-size: 2.5em; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            cursor: pointer; z-index: 100;
+            cursor: pointer; z-index: 100; transition: all 0.3s;
         }
 
+        /* --- MODAL --- */
         #modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
@@ -105,7 +107,7 @@
             background: var(--card-bg); width: 85%; max-width: 350px;
             padding: 25px; border-radius: 25px; display: flex; flex-direction: column; gap: 15px;
         }
-        select, input { background: #252525; border: 1px solid #444; color: white; padding: 14px; border-radius: 12px; outline: none; }
+        select, input { background: #252525; border: 1px solid #444; color: white; padding: 14px; border-radius: 12px; font-size: 1em; outline: none; }
         .btn-save { background: var(--primary); color: white; padding: 15px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
@@ -113,7 +115,7 @@
 
     <div id="splash">
         <div class="logo-big">AuraID</div>
-        <div style="margin-top: 10px; color: var(--text-dim);">TRAŽENJE SIGNALA...</div>
+        <div style="margin-top: 10px; color: var(--text-dim);">POVEZIVANJE...</div>
     </div>
 
     <div class="app-container">
@@ -150,7 +152,7 @@
                 <option value="C">☕ Društvo</option>
                 <option value="H">🆘 Pomoć</option>
             </select>
-            <input type="text" id="desc" placeholder="Što točno? (npr. Soboslikar)" maxlength="30">
+            <input type="text" id="desc" placeholder="Što točno? (npr. Kava)" maxlength="30">
             <button class="btn-save" onclick="saveAura()">Aktiviraj</button>
             <button style="background:none; color:white; border:none; cursor:pointer;" onclick="toggleModal(false)">Odustani</button>
         </div>
@@ -166,15 +168,12 @@
 
         let myAuras = JSON.parse(localStorage.getItem('my_auras')) || [];
         let isMatchActive = false;
+        let currentDistance = 20;
+        let beepInterval = null;
 
-        // Hash funkcija za precizno spajanje teksta
         function generateHash(str) {
-            let hash = 0;
-            str = str.toLowerCase().trim();
-            for (let i = 0; i < str.length; i++) {
-                hash = (hash << 5) - hash + str.charCodeAt(i);
-                hash |= 0;
-            }
+            let hash = 0; str = str.toLowerCase().trim();
+            for (let i = 0; i < str.length; i++) { hash = (hash << 5) - hash + str.charCodeAt(i); hash |= 0; }
             return Math.abs(hash % 10000);
         }
 
@@ -189,32 +188,17 @@
             if (hasTrebam && !hasNudim) color = '#ff3b30';
             if (hasNudim && !hasTrebam) color = '#34c759';
             if (hasTrebam && hasNudim) color = '#ffcc00';
-            
             document.getElementById('core').style.backgroundColor = color;
-            document.getElementById('core').style.boxShadow = `0 0 40px ${color}`;
             document.getElementById('main-title').style.color = color;
         }
 
         function renderAuras() {
-             myAuras.forEach(aura => {
-        if (aura.hash === undefined) {
-            aura.hash = generateHash(aura.text);
-        }
-    });
-    
-    const list = document.getElementById('aura-list');
+            myAuras.forEach(aura => { if (aura.hash === undefined) aura.hash = generateHash(aura.text); });
             const list = document.getElementById('aura-list');
             list.innerHTML = '';
             myAuras.forEach((aura, index) => {
                 const color = aura.type === '01' ? 'var(--nudim)' : 'var(--trebam)';
-                list.innerHTML += `
-                    <div class="aura-card" style="border-left-color: ${color}">
-                        <div style="display:flex; flex-direction:column">
-                            <span style="font-size:0.7em; color:${color}">${aura.catName}</span>
-                            <span class="card-text">${aura.text}</span>
-                        </div>
-                        <button class="btn-delete" onclick="deleteAura(${index})">✕</button>
-                    </div>`;
+                list.innerHTML += `<div class="aura-card" style="border-left-color: ${color}"><div><span style="font-size:0.7em; color:${color}">${aura.catName}</span><br><span class="card-text">${aura.text}</span></div><button class="btn-delete" onclick="deleteAura(${index})">✕</button></div>`;
             });
             localStorage.setItem('my_auras', JSON.stringify(myAuras));
             updateAuraVisuals();
@@ -227,7 +211,6 @@
             const catName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
             const text = document.getElementById('desc').value;
             if(!text) return;
-            
             myAuras.push({ type, cat, catName, text, hash: generateHash(text) });
             renderAuras();
             toggleModal(false);
@@ -238,36 +221,46 @@
 
         async function sendMasterPing() {
             const masterHex = myAuras.length > 0 ? myAuras.map(a => a.type + a.cat + ":" + a.hash).join(',') : "";
-            try {
-                await fetch(WEB_APP_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify({id: userId, hex: masterHex, lokacija: "Menza_Sava"}) 
-                });
-            } catch (e) { console.log("Ping error"); }
+            try { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({id: userId, hex: masterHex, lokacija: "Menza_Sava"}) }); } catch (e) { console.log("Ping error"); }
         }
 
         async function checkStatus() {
             try {
                 const response = await fetch(`${WEB_APP_URL}?id=${userId}`);
-                const status = await response.text();
-                if (status === "MATCH!" && !isMatchActive) {
-                    isMatchActive = true;
-                    document.getElementById('status-display').innerText = "PRILIKA U BLIZINI!";
-                    document.getElementById('status-display').classList.add('status-match');
-                    auraAudio.play().catch(e => console.log("Audio blocked. Click anywhere."));
-                    if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
-                } else if (status === "NoMatch" && isMatchActive) {
-                    isMatchActive = false;
-                    document.getElementById('status-display').innerText = "Traženje signala...";
-                    document.getElementById('status-display').classList.remove('status-match');
-                }
+                const data = await response.json();
+                currentDistance = data.distance;
+                if (data.status === "MATCH!" && !isMatchActive) { startDetector(); } 
+                else if (data.status === "NoMatch" && isMatchActive) { stopDetector(); }
             } catch (e) { console.log("Check error"); }
+        }
+
+        function startDetector() {
+            isMatchActive = true;
+            document.getElementById('status-display').innerText = "PRILIKA U BLIZINI!";
+            document.getElementById('status-display').classList.add('status-match');
+            runBeepLoop();
+        }
+
+        function stopDetector() {
+            isMatchActive = false;
+            document.getElementById('status-display').innerText = "Traženje signala...";
+            document.getElementById('status-display').classList.remove('status-match');
+            clearTimeout(beepInterval);
+        }
+
+        function runBeepLoop() {
+            if (!isMatchActive) return;
+            auraAudio.play().catch(e => console.log("Audio blocked"));
+            if (navigator.vibrate) navigator.vibrate(100);
+            let pause = currentDistance * 70; 
+            if (pause < 150) pause = 150;
+            if (pause > 2000) pause = 2000;
+            beepInterval = setTimeout(runBeepLoop, pause);
         }
 
         renderAuras();
         setInterval(sendMasterPing, 10000);
-        setInterval(checkStatus, 4000);
+        setInterval(checkStatus, 3000);
         document.body.onclick = () => { auraAudio.load(); };
     </script>
 </body>
